@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hillindigo.ccwu.cc/sitemap-index.xml
