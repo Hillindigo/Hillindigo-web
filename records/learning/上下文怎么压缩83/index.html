@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#167f7d"><meta name="description" content="Agent 的上下文压缩方案:各家路线截然不同——Claude Code 用成本递增的五段流水线、Codex 保留用户原文换 handoff 摘要、OpenCode 隐藏旧输出并回放最后指令、Amp 干脆不压缩改用换线程——但共识是明确的：分层渐进、成本递增、增量摘要、用真实 token、保护用户消息和近端内容，且 stub 决策必须单调不滑窗，否则每次压缩都会击碎 Prompt Cache（真实案例 177 step 烧掉 $77.3，83% 是 cache_write）。"><link rel="canonical" href="https://hillindigo.ccwu.cc/records/learning/%E4%B8%8A%E4%B8%8B%E6%96%87%E6%80%8E%E4%B9%88%E5%8E%8B%E7%BC%A983/"><meta property="og:locale" content="zh_CN"><meta property="og:type" content="website"><meta property="og:title" content="上下文怎么压缩8/3 · 青山黛"><meta property="og:description" content="Agent 的上下文压缩方案:各家路线截然不同——Claude Code 用成本递增的五段流水线、Codex 保留用户原文换 handoff 摘要、OpenCode 隐藏旧输出并回放最后指令、Amp 干脆不压缩改用换线程——但共识是明确的：分层渐进、成本递增、增量摘要、用真实 token、保护用户消息和近端内容，且 stub 决策必须单调不滑窗，否则每次压缩都会击碎 Prompt Cache（真实案例 177 step 烧掉 $77.3，83% 是 cache_write）。"><meta property="og:url" content="https://hillindigo.ccwu.cc/records/learning/%E4%B8%8A%E4%B8%8B%E6%96%87%E6%80%8E%E4%B9%88%E5%8E%8B%E7%BC%A983/"><meta property="og:image" content="https://hillindigo.ccwu.cc/media/brand/avatar.png"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="上下文怎么压缩8/3 · 青山黛"><meta name="twitter:description" content="Agent 的上下文压缩方案:各家路线截然不同——Claude Code 用成本递增的五段流水线、Codex 保留用户原文换 handoff 摘要、OpenCode 隐藏旧输出并回放最后指令、Amp 干脆不压缩改用换线程——但共识是明确的：分层渐进、成本递增、增量摘要、用真实 token、保护用户消息和近端内容，且 stub 决策必须单调不滑窗，否则每次压缩都会击碎 Prompt Cache（真实案例 177 step 烧掉 $77.3，83% 是 cache_write）。"><meta name="twitter:image" content="https://hillindigo.ccwu.cc/media/brand/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"上下文怎么压缩8/3 · 青山黛","description":"Agent 的上下文压缩方案:各家路线截然不同——Claude Code 用成本递增的五段流水线、Codex 保留用户原文换 handoff 摘要、OpenCode 隐藏旧输出并回放最后指令、Amp 干脆不压缩改用换线程——但共识是明确的：分层渐进、成本递增、增量摘要、用真实 token、保护用户消息和近端内容，且 stub 决策必须单调不滑窗，否则每次压缩都会击碎 Prompt Cache（真实案例 177 step 烧掉 $77.3，83% 是 cache_write）。","url":"https://hillindigo.ccwu.cc/records/learning/%E4%B8%8A%E4%B8%8B%E6%96%87%E6%80%8E%E4%B9%88%E5%8E%8B%E7%BC%A983/","inLanguage":"zh-CN"}</script><link rel="icon" type="image/png" href="/media/brand/avatar.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet"><title>上下文怎么压缩8/3 · 青山黛</title><link rel="stylesheet" href="/_astro/BaseLayout.DsLmeRk_.css"><link rel="stylesheet" href="/_astro/SeparatedRecordDetail.B1GoC-4X.css"></head><body><main class="separated-detail detail-learning" data-astro-cid-pcpmzeha><section class="separated-hero accent-teal" data-astro-cid-pcpmzeha><header class="site-header dark" data-header><a class="brand" href="/" aria-label="回到首页"><span class="brand-cn">青山黛</span><span class="brand-dot" aria-hidden="true"></span><span class="brand-en">Hillindigo</span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span class="sr-only">打开导航</span></button><nav id="site-nav" class="site-nav" aria-label="主导航"><a href="/">首页</a><a href="/essays/">随笔</a><div class="nav-item has-submenu submenu-records" data-submenu-item><button class="nav-parent-trigger active" type="button" aria-expanded="false" aria-controls="submenu-records" data-submenu-trigger><span>记录</span><i aria-hidden="true"></i></button><div id="submenu-records" class="nav-submenu" aria-label="记录分类"><a href="/records/learning/"><span class="submenu-mark" aria-hidden="true">01</span><span class="submenu-copy"><strong>学习</strong><small>知识、实践与阶段复盘</small></span><i class="submenu-arrow" aria-hidden="true">→</i></a><a href="/records/resources/"><span class="submenu-mark" aria-hidden="true">02</span><span class="submenu-copy"><strong>资源</strong><small>工具、网站与长期收藏</small></span><i class="submenu-arrow" aria-hidden="true">→</i></a></div></div><div class="nav-item has-submenu submenu-life" data-submenu-item><button class="nav-parent-trigger" type="button" aria-expanded="false" aria-controls="submenu-life" data-submenu-trigger><span>生活</span><i aria-hidden="true"></i></button><div id="submenu-life" class="nav-submenu" aria-label="生活分类"><a href="/life/images/"><span class="submenu-mark" aria-hidden="true">◉</span><span class="submenu-copy"><strong>影像</strong><small>摄影、视频与日常片段</small></span><i class="submenu-arrow" aria-hidden="true">→</i></a><a href="/life/travel/"><span class="submenu-mark" aria-hidden="true">↗</span><span class="submenu-copy"><strong>旅游</strong><small>路线、抵达与旅途记录</small></span><i class="submenu-arrow" aria-hidden="true">→</i></a></div></div><a href="/about/">关于</a></nav></header><script type="module">var e=document.querySelector(`[data-header]`),t=document.querySelector(`.menu-toggle`),n=document.querySelector(`.site-nav`),r=[...document.querySelectorAll(`[data-submenu-item]`)],i=e=>{r.forEach(t=>{t!==e&&(t.classList.remove(`submenu-open`),t.querySelector(`[data-submenu-trigger]`)?.setAttribute(`aria-expanded`,`false`))})};t?.addEventListener(`click`,()=>{let n=t.getAttribute(`aria-expanded`)===`true`;t.setAttribute(`aria-expanded`,String(!n)),e?.classList.toggle(`menu-open`,!n)}),n?.querySelectorAll(`a`).forEach(n=>{n.addEventListener(`click`,()=>{t?.setAttribute(`aria-expanded`,`false`),e?.classList.remove(`menu-open`),i()})}),r.forEach(e=>{let t=e.querySelector(`[data-submenu-trigger]`);t?.addEventListener(`click`,()=>{let n=!e.classList.contains(`submenu-open`);i(e),e.classList.toggle(`submenu-open`,n),t.setAttribute(`aria-expanded`,String(n))})}),document.addEventListener(`click`,e=>{(!(e.target instanceof Element)||!e.target.closest(`[data-submenu-item]`))&&i()}),document.addEventListener(`keydown`,n=>{n.key===`Escape`&&(i(),t?.setAttribute(`aria-expanded`,`false`),e?.classList.remove(`menu-open`))});var a=()=>e?.classList.toggle(`scrolled`,window.scrollY>24);a(),window.addEventListener(`scroll`,a,{passive:!0});</script><div class="detail-orbit" aria-hidden="true" data-astro-cid-pcpmzeha></div><div class="shell hero-copy" data-astro-cid-pcpmzeha><span data-astro-cid-pcpmzeha>LEARNING NOTE · LEARN</span><h1 data-astro-cid-pcpmzeha>上下文怎么压缩8/3</h1><p data-astro-cid-pcpmzeha>Agent 的上下文压缩方案:各家路线截然不同——Claude Code 用成本递增的五段流水线、Codex 保留用户原文换 handoff 摘要、OpenCode 隐藏旧输出并回放最后指令、Amp 干脆不压缩改用换线程——但共识是明确的：分层渐进、成本递增、增量摘要、用真实 token、保护用户消息和近端内容，且 stub 决策必须单调不滑窗，否则每次压缩都会击碎 Prompt Cache（真实案例 177 step 烧掉 $77.3，83% 是 cache_write）。</p><div class="hero-meta" data-astro-cid-pcpmzeha><time datetime="2026-08-03T00:00:00.000Z" data-astro-cid-pcpmzeha>2026.08.03</time><small data-astro-cid-pcpmzeha>12 MIN READ</small><small data-astro-cid-pcpmzeha>IN-PROGRESS</small></div></div></section><div class="shell detail-grid" data-astro-cid-pcpmzeha><aside data-astro-cid-pcpmzeha><span data-astro-cid-pcpmzeha>LEARNING TOPICS</span><div data-astro-cid-pcpmzeha><a href="/records/learning/tags/agent/" data-astro-cid-pcpmzeha>Agent</a></div></aside><article class="record-prose" data-astro-cid-pcpmzeha><p>最近读了一篇写得很细的文章，作者把 Claude Code、Codex CLI、OpenCode、Cline、Cursor、Amp 还有 MemGPT 这几家的上下文压缩策略逐个拆开，最后自己在云端多用户 Agent（MUR AI）上落地了一套“四级水位线”方案。信息密度很高，我整理成学习笔记，顺便加了一些自己的理解。</p>
+<h2 id="同一个问题六种完全不同的答案">同一个问题，六种完全不同的答案</h2>
+<p>几乎所有 Agent 都要做上下文压缩，但怎么做，各家分歧大得离谱。先把结论摆出来：</p>
+<table>
+<thead>
+<tr>
+<th>产品</th>
+<th>核心策略</th>
+<th>一句话概括</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Code</td>
+<td>五段流水线，成本递增</td>
+<td>便宜的本地操作先上，LLM 摘要兜底</td>
+</tr>
+<tr>
+<td>Codex CLI</td>
+<td>保留近期用户消息原文，其余换成 handoff 摘要</td>
+<td>用户说的话最准，模型说的可以重写</td>
+</tr>
+<tr>
+<td>OpenCode</td>
+<td>时间戳标记隐藏 + 结构化摘要 + 回放最后一条用户消息</td>
+<td>不真删，理论上可恢复</td>
+</tr>
+<tr>
+<td>Cline</td>
+<td>/smol 手动 + auto-compact 自动</td>
+<td>双模式，摘要后在同一任务内接续</td>
+</tr>
+<tr>
+<td>Cursor</td>
+<td>自动摘要 + 提示开新对话 + 历史可搜索</td>
+<td>压缩后还能回头检索原始细节</td>
+</tr>
+<tr>
+<td>Amp</td>
+<td>不做递归压缩，/handoff 开新线程</td>
+<td>长对话本身就是问题，换线程比压缩好</td>
+</tr>
+<tr>
+<td>MemGPT / Letta</td>
+<td>上下文 = RAM，历史 = 磁盘</td>
+<td>操作系统级的内存调度</td>
+</tr>
+</tbody>
+</table>
+<p>看下来最大的感受是：这件事没有显而易见的最优解，每一种选择背后都是取舍，而且取舍方向经常互相矛盾。比如 Amp 认为递归摘要会导致性能逐步衰减，干脆不做；Claude Code 则把摘要做成了一套精细的流水线。谁对谁错，很难说。</p>
+<h2 id="第一代做法为什么人人喊打">第一代做法为什么人人喊打</h2>
+<p>要理解新方案，得先看看它们想摆脱什么。第一代压缩逻辑一句话能讲完：快满的时候，把历史全量捏成一段摘要。这个方案实现简单，但痛点全在明面上：</p>
+<ul>
+<li>悬崖式触发。不溢出就一动不动，对话越来越胖，模型注意力越来越散；一旦溢出就全量出手。触发那一刻质量已经塌了，模型刚因为信息过载走神，又立刻被剥夺大半上下文。</li>
+<li>全量摘要必丢细节。几十轮消息压成几百字，变量名、函数签名、错误堆栈、用户的具体措辞全没了，偏偏这些是 Agent 继续干活最需要的。</li>
+<li>token 估算粗糙。不少实现用 <code>text.length / 3</code> 估算，中英混合场景误差能到 30-50%。以为安全实际已经溢出，以为该压了其实还早。</li>
+<li>不区分信息价值。5000 行 grep 输出和 5000 token 的关键诊断被一视同仁，前者裁了没事，后者裁了 Agent 立刻不会干活。</li>
+<li>用户内容被一刀切。用户贴的代码代表输入意图，和工具输出性质完全不同，压没了模型就忘了要改什么。</li>
+</ul>
+<p>根本问题在于：第一代把压缩当突发事件处理，而不是一种持续维护的能力。</p>
+<h2 id="各家第二代的思路几个我印象最深的点">各家第二代的思路，几个我印象最深的点</h2>
+<p>Claude Code 是我觉得设计最精细的：一条按成本严格递增的五段流水线——调整工具输出截断预算 → 截短老的工具输出 → 局部内联压缩 → 对更久远历史做更细的折叠 → 最后才调 LLM 做结构化摘要。前四步零 API 调用，只有第五步花钱。摘要本身是结构化的九章节（用户意图、请求、技术概念、文件代码段、错误修复、待办、下一步……）。它还刻意保持消息序列前缀稳定，让 Prompt Cache 命中率不因压缩而掉。</p>
+<p>更有意思的是它内部还有两条“把脏活交给服务端”的路径：<code>cached_microcompact</code> 把“删掉旧 tool 结果”包装成 API 层的 cache_edits 指令，客户端发出去的 prompt 字节不变，服务端在已缓存前缀上直接抠内容，缓存不失效。<code>apiMicrocompact</code> 更彻底，直接调 Anthropic 的 context_management API 让服务端按 input_tokens 阈值自动裁剪。一句话总结：能让服务端做的就让服务端做，本地操作永远只是兜底。</p>
+<p>Codex CLI 的做法最“信用户”：在约 95% 容量时触发，生成一份 handoff 摘要替换旧历史，assistant 回复和工具结果物理删除，但近期约 20k token 内的用户消息原样保留。设计哲学是把压缩当成同事间的工作交接：进展、约束、剩余任务，足够下一个模型接手继续干。用户说的话最准确，模型说的可以重写——这个原则我很认同。</p>
+<p>OpenCode 分两步：Prune 每次响应后自动触发，无 LLM 调用，把老的工具输出用时间戳标记为“已压缩”，数据还在数据库里，模型看到的只是占位符；Summary 只在快超限时触发，生成五段式摘要（目标/指令/发现/已完成/相关文件），然后自动回放用户最后一条消息——模型不是从摘要继续，而是从你最近的指令继续。这个设计很聪明，避免了“摘要接续”导致的意图漂移。</p>
+<p>Cline 是手动 + 自动双模式，<code>/smol</code> 手动触发后在同一任务内接续，不用切会话，开了 Focus Chain 的话待办列表还能穿越压缩存活。</p>
+<p>Cursor 压缩后把聊天历史变成可搜索的文件，Agent 能回头检索原始细节，据说 A/B 测试里省了 46.9% 的 token。不过社区反馈有个已知问题：压缩后模型有时会“忘掉”刚才的编辑，官方确认是高优 bug。</p>
+<p>Amp 的立场最鲜明：引用 OpenAI 的内部研究说递归摘要会导致性能衰减，所以干脆不压缩，用 <code>/handoff</code> 把要点打包进新线程，交接前用户还能审查编辑。线程是一等公民，可以互相引用、可视化。不过 2026 年的更新里它也加了 90% 窗口用量时的自动管理，算是向现实妥协。</p>
+<p>MemGPT / Letta 是学术派：上下文当 RAM，Recall Memory 当交换分区，Archival Memory 当磁盘（向量存储），换入换出由 Agent 自己通过函数调用决定，不是被动截断。代价是架构复杂、依赖外部向量存储、有检索延迟，对单会话压缩来说有点重，适合跨会话长期记忆的场景。</p>
+<h2 id="一个隐蔽的坑滑窗-stub-会让缓存每步失效一次">一个隐蔽的坑：滑窗 stub 会让缓存每步失效一次</h2>
+<p>文章里有个案例特别有说服力。假设你设了规则“保留最近 N 条 tool 结果，更老的替换成 stub”——听起来很合理，但如果这个判断在 step-loop 里每一步都重算，那么每完成一个 step，就有一条旧结果滑出窗口被替换。它的字节变了，从这个位置往后的整段 prompt 前缀对 Prompt Cache 全部失效，需要重新写入。</p>
+<p>他们有个真实 Task：4 轮对话、177 个 step、59 分钟，烧了 $77.3，其中 83%（$64.8）全是 cache_write。要知道 cache_write 单价是 cache_read 的 12.5 倍。日志里看得很清楚：前两步还命中缓存，从第 7 步开始 cacheRead 卡死、cacheWrite 一路涨到十几万，剩下 50 多个 step 每一步都在为“窗口挪了一格”买单。</p>
+<p>教训就一句话：stub 决策必须单调推进，只能大跳，不能滑窗。一个 part 一旦标成 stub，后续所有 turn 都保持 stub 不变；要么把决策按 part ID 持久化，要么干脆交给服务端的 cache_edits API 做——客户端字节零变化，缓存天然稳定。</p>
+<h2 id="几近共识的原则">几近共识的原则</h2>
+<p>方案细节差异很大，但以下几条几乎人人认同：</p>
+<ul>
+<li>分层渐进，不一刀切。定义多个水位线，越接近上限手段越激进，永远小幅维护，避免悬崖式塌方。</li>
+<li>成本严格递增。便宜的先做（字符串截断、占位符替换），贵的最后做（LLM 摘要）。</li>
+<li>增量摘要优于全量摘要。老做法每次重新摘要全部历史；新做法保留一份活的摘要，每次只把新增部分合并进去。同一段历史不会被反复重写，避免“摘要的摘要”语义漂移。打个比方：全量摘要是每周把过去三个月的工作重新写一份周报，增量摘要是维护一份持续更新的项目状态。</li>
+<li>用真实 token，别估算。LLM API 每次都返回 <code>usage.totalTokens</code>，免费精确唯一可信。<code>text.length / 3</code> 只配在内部排序时用用。</li>
+<li>用户消息有特权。Codex 一字不动，OpenCode 压缩后回放最后一条，其他家至少保证用户纯文本不裁。</li>
+<li>保护近端。最近几轮是模型短期连贯性的命脉，常见做法是定义保护区（比如最近 8000 token 内任何级别都不动）。</li>
+</ul>
+<h2 id="落地四级水位线">落地：四级水位线</h2>
+<p>他们的方案是四个累积的 Tier，可以理解成电脑的内存压力监视器：</p>
+<ul>
+<li>Tier 0（&lt;60%）：什么都不做。上下文宽裕，最好的优化是不优化。</li>
+<li>Tier 1 Snip（60-80%）：便宜的整理。零 LLM 调用，纯字符串处理：截短老的工具输出（保留前几行 + 工具名 + “还有 X 条省略”）、截短用户消息里的代码块（保留文件名注释 + 前几行 + 总行数）。保护区不动，某些工具豁免，用户纯文本永远不动。</li>
+<li>Tier 2 Prune（80-95%）：更狠的释压。已截短的进一步替换成占位符，裁掉 assistant 旧文本。依然零 LLM 成本。</li>
+<li>Tier 3 Summarize（≥95%）：兜底。只有前两级都救不回来才调 LLM，而且是增量摘要：找出“上次摘要之后 ~ 保护区之前”的消息作为 delta，输入“上次摘要 + delta”生成合并摘要，四段结构（进展/文件/待办/上下文）。</li>
+</ul>
+<p>触发顺序保证最坏情况下，送进 LLM 的量已经被前面免费砍掉一大块。</p>
+<h2 id="云端-agent-还要多做三层">云端 Agent 还要多做三层</h2>
+<p>MUR AI 跑在云端、服务多人，这带来 CLI 工具不用考虑的问题：用户关浏览器再回来压缩状态不能丢、Pod 重启或流量漂移后跨进程决策必须一致、工具完整日志要支持事后审计。</p>
+<ul>
+<li>存储分离：完整工具输出落盘到沙箱 <code>_internal/truncated-outputs/{callId}.log</code>，对话里只留截断版 + <code>fullLogPath</code>。模型知道完整内容在哪，但没花 token 去读；前端按需调 API 现取现读。本质是把“模型的工作记忆”和“用户的审计需求”解耦。</li>
+<li>工具差异化：工具分四个梯度——完全保护（Skill、Task，有状态意义删了 Agent 就糊涂）、微压缩豁免（AskUserQuestion 的输出是用户回答）、白名单可压（bash/read/grep 这类无状态读取）、差异化存储预算（Read 30KB、Bash 50KB、WebSearch 15KB）。</li>
+<li>跨轮缓存：把每轮截断决策按 part ID 存进 Redis（key 形如 <code>msgOptCache:{sessionId}</code>，TTL 30 分钟），重启或换 Pod 后先查缓存复用旧决策。效果是同一个 part 在整个会话里始终长一样，消息前缀稳定、Prompt Cache 友好。</li>
+<li>多用户隔离：所有压缩状态按 <code>(userId, sessionId)</code> 隔离，数据库写入强制双条件 WHERE、COS 路径按用户分区、SSE 压缩事件按 sessionId 过滤订阅。</li>
+</ul>
+<h2 id="红线什么都不能动">红线：什么都不能动</h2>
+<p>压缩系统最大的事故不是压不够，而是压错东西。他们明确列了红线：保护区内的所有消息、用户消息的纯文本部分、PROTECTED_TOOLS 的输出、微压缩豁免工具的输出、带 compactionProtected 标记的 Part——这些在任何 Tier 下都不动，“如果保护区都救不下来，那就让上下文真的爆出来，比错误压缩造成行为漂移要好”。</p>
+<h2 id="我自己的收获">我自己的收获</h2>
+<p>这篇文章最打动我的是最后一节的定性：Context 压缩的目标从来不是省 token，省钱只是顺带的，它要解决的是保护模型的注意力。200K 窗口听起来很大，但研究反复表明上下文塞到 70% 以上，模型的中段失忆和指令漂移会明显恶化——不是真的忘了，是注意力被稀释、信号被噪声淹没。</p>
+<p>所以合格的压缩系统本质上是个信号工程师：把无关紧要的工具输出降为占位符，让模型不用扫过它们；把老文本裁短，让最近的对话不被淹没；把历史合并成结构化摘要，让模型用事实思考而不是用文本回忆。2026 年做 Agent 工程，这个问题绕不开，这篇笔记值得常回来翻。<br>
+学习文章来源：<a href="https://zhuanlan.zhihu.com/p/2047337481255884504">横向拆解Claude Code、Codex等六大Agent上下文压缩策略后，我们做了第 7 个 - 知乎</a></p>
+</article></div><footer class="shell detail-footer" data-astro-cid-pcpmzeha><span data-astro-cid-pcpmzeha>© 2026 HILLINDIGO</span><a href="/records/learning/" data-astro-cid-pcpmzeha>返回学习记录 ↑</a></footer></main></body></html>
