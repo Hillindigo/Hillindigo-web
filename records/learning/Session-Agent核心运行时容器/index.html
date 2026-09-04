@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><meta name="theme-color" content="#167f7d"><meta name="description" content="Session 是单个 Agent 线程的运行时容器 —— 装状态、装能力、装驱动逻辑，让 Agent 从&quot;能生成文本&quot;变成&quot;能持续完成任务&quot;。"><link rel="canonical" href="https://hillindigo.ccwu.cc/records/learning/Session-Agent%E6%A0%B8%E5%BF%83%E8%BF%90%E8%A1%8C%E6%97%B6%E5%AE%B9%E5%99%A8/"><meta property="og:locale" content="zh_CN"><meta property="og:type" content="website"><meta property="og:title" content="Session-Agent核心运行时容器 · 青山黛"><meta property="og:description" content="Session 是单个 Agent 线程的运行时容器 —— 装状态、装能力、装驱动逻辑，让 Agent 从&quot;能生成文本&quot;变成&quot;能持续完成任务&quot;。"><meta property="og:url" content="https://hillindigo.ccwu.cc/records/learning/Session-Agent%E6%A0%B8%E5%BF%83%E8%BF%90%E8%A1%8C%E6%97%B6%E5%AE%B9%E5%99%A8/"><meta property="og:image" content="https://hillindigo.ccwu.cc/media/brand/avatar.png"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Session-Agent核心运行时容器 · 青山黛"><meta name="twitter:description" content="Session 是单个 Agent 线程的运行时容器 —— 装状态、装能力、装驱动逻辑，让 Agent 从&quot;能生成文本&quot;变成&quot;能持续完成任务&quot;。"><meta name="twitter:image" content="https://hillindigo.ccwu.cc/media/brand/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Session-Agent核心运行时容器 · 青山黛","description":"Session 是单个 Agent 线程的运行时容器 —— 装状态、装能力、装驱动逻辑，让 Agent 从\"能生成文本\"变成\"能持续完成任务\"。","url":"https://hillindigo.ccwu.cc/records/learning/Session-Agent%E6%A0%B8%E5%BF%83%E8%BF%90%E8%A1%8C%E6%97%B6%E5%AE%B9%E5%99%A8/","inLanguage":"zh-CN"}</script><link rel="icon" type="image/png" href="/media/brand/avatar.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;600;700;900&display=swap" rel="stylesheet"><title>Session-Agent核心运行时容器 · 青山黛</title><link rel="stylesheet" href="/_astro/BaseLayout.DsLmeRk_.css"><link rel="stylesheet" href="/_astro/SeparatedRecordDetail.B1GoC-4X.css"></head><body><main class="separated-detail detail-learning" data-astro-cid-pcpmzeha><section class="separated-hero accent-teal" data-astro-cid-pcpmzeha><header class="site-header dark" data-header><a class="brand" href="/" aria-label="回到首页"><span class="brand-cn">青山黛</span><span class="brand-dot" aria-hidden="true"></span><span class="brand-en">Hillindigo</span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span class="sr-only">打开导航</span></button><nav id="site-nav" class="site-nav" aria-label="主导航"><a href="/">首页</a><a href="/essays/">随笔</a><div class="nav-item has-submenu submenu-records" data-submenu-item><button class="nav-parent-trigger active" type="button" aria-expanded="false" aria-controls="submenu-records" data-submenu-trigger><span>记录</span><i aria-hidden="true"></i></button><div id="submenu-records" class="nav-submenu" aria-label="记录分类"><a href="/records/learning/"><span class="submenu-mark" aria-hidden="true">01</span><span class="submenu-copy"><strong>学习</strong><small>知识、实践与阶段复盘</small></span><i class="submenu-arrow" aria-hidden="true">→</i></a><a href="/records/resources/"><span class="submenu-mark" aria-hidden="true">02</span><span class="submenu-copy"><strong>资源</strong><small>工具、网站与长期收藏</small></span><i class="submenu-arrow" aria-hidden="true">→</i></a></div></div><div class="nav-item has-submenu submenu-life" data-submenu-item><button class="nav-parent-trigger" type="button" aria-expanded="false" aria-controls="submenu-life" data-submenu-trigger><span>生活</span><i aria-hidden="true"></i></button><div id="submenu-life" class="nav-submenu" aria-label="生活分类"><a href="/life/images/"><span class="submenu-mark" aria-hidden="true">◉</span><span class="submenu-copy"><strong>影像</strong><small>摄影、视频与日常片段</small></span><i class="submenu-arrow" aria-hidden="true">→</i></a><a href="/life/travel/"><span class="submenu-mark" aria-hidden="true">↗</span><span class="submenu-copy"><strong>旅游</strong><small>路线、抵达与旅途记录</small></span><i class="submenu-arrow" aria-hidden="true">→</i></a></div></div><a href="/about/">关于</a></nav></header><script type="module">var e=document.querySelector(`[data-header]`),t=document.querySelector(`.menu-toggle`),n=document.querySelector(`.site-nav`),r=[...document.querySelectorAll(`[data-submenu-item]`)],i=e=>{r.forEach(t=>{t!==e&&(t.classList.remove(`submenu-open`),t.querySelector(`[data-submenu-trigger]`)?.setAttribute(`aria-expanded`,`false`))})};t?.addEventListener(`click`,()=>{let n=t.getAttribute(`aria-expanded`)===`true`;t.setAttribute(`aria-expanded`,String(!n)),e?.classList.toggle(`menu-open`,!n)}),n?.querySelectorAll(`a`).forEach(n=>{n.addEventListener(`click`,()=>{t?.setAttribute(`aria-expanded`,`false`),e?.classList.remove(`menu-open`),i()})}),r.forEach(e=>{let t=e.querySelector(`[data-submenu-trigger]`);t?.addEventListener(`click`,()=>{let n=!e.classList.contains(`submenu-open`);i(e),e.classList.toggle(`submenu-open`,n),t.setAttribute(`aria-expanded`,String(n))})}),document.addEventListener(`click`,e=>{(!(e.target instanceof Element)||!e.target.closest(`[data-submenu-item]`))&&i()}),document.addEventListener(`keydown`,n=>{n.key===`Escape`&&(i(),t?.setAttribute(`aria-expanded`,`false`),e?.classList.remove(`menu-open`))});var a=()=>e?.classList.toggle(`scrolled`,window.scrollY>24);a(),window.addEventListener(`scroll`,a,{passive:!0});</script><div class="detail-orbit" aria-hidden="true" data-astro-cid-pcpmzeha></div><div class="shell hero-copy" data-astro-cid-pcpmzeha><span data-astro-cid-pcpmzeha>LEARNING NOTE · LEARN</span><h1 data-astro-cid-pcpmzeha>Session-Agent核心运行时容器</h1><p data-astro-cid-pcpmzeha>Session 是单个 Agent 线程的运行时容器 —— 装状态、装能力、装驱动逻辑，让 Agent 从&quot;能生成文本&quot;变成&quot;能持续完成任务&quot;。</p><div class="hero-meta" data-astro-cid-pcpmzeha><time datetime="2026-08-06T00:00:00.000Z" data-astro-cid-pcpmzeha>2026.08.06</time><small data-astro-cid-pcpmzeha>10 MIN READ</small><small data-astro-cid-pcpmzeha>IN-PROGRESS</small></div></div></section><div class="shell detail-grid" data-astro-cid-pcpmzeha><aside data-astro-cid-pcpmzeha><span data-astro-cid-pcpmzeha>LEARNING TOPICS</span><div data-astro-cid-pcpmzeha><a href="/records/learning/tags/agent/" data-astro-cid-pcpmzeha>Agent</a></div></aside><article class="record-prose" data-astro-cid-pcpmzeha><h1 id="agent-原理sessionagent-的核心运行时容器">【Agent 原理】Session：Agent 的核心运行时容器</h1>
+<p>在以 Codex 为代表的 coding agent 系统里，真正让 Agent 能连续工作、调用工具、记住上下文、处理用户输入、响应中断、维护状态的，是一套运行时机制，Session 就是这套机制的核心之一。</p>
+<p>一句话理解：Session 是一个 Agent Thread 的运行时上下文，承载了一次对话线程从初始化、接收输入、执行 turn、调用工具、更新状态，到最终关闭的完整生命周期。</p>
+<p>它不是我们常说的 web session，也不是 HTTP session。它更像一个正在运行的 Agent 实例，内部包含配置、历史、工具服务、事件通道、当前任务，以及 Agent 当前状态。</p>
+<h2 id="一session-解决什么问题">一、Session 解决什么问题</h2>
+<p>Agent 要稳定运行，至少要解决五个问题：</p>
+<p>第一，Agent 需要知道自己是谁。 每个 Session 绑定一个 <code>conversation_id</code>（当前 thread 的 ID）。多 agent 场景下，一个 root thread 可派生出多个 sub-agent，各自有 thread，但共享同一个更高层的 <code>session_id</code>。</p>
+<p>第二，Agent 需要保存上下文。 模型每一轮输出都依赖历史、配置、工具结果、用户输入和系统状态。<code>SessionState</code> 保存这些会话级可变状态：上下文历史、配置、token 用量、rate limit、上一轮 turn 设置等。</p>
+<p>第三，Agent 需要调用工具。 coding agent 不止生成文本，还要执行 shell、读写文件、调 MCP server、处理 approval、用 plugins 和 skills。<code>SessionServices</code> 持有这些运行时服务：model client、MCP connection manager、exec manager、hooks、plugin manager、skills manager、AgentControl 等。</p>
+<p>第四，Agent 需要被驱动。 外部输入不直接调模型，而是先包装成 Op（UserInput、Interrupt、Shutdown、InterAgentCommunication），进入 <code>submission_loop</code>，由 loop 分发给不同 handler 处理。</p>
+<p>第五，Agent 需要对外发事件。 执行过程中持续发出事件：session configured、turn started、tool call、agent message、turn completed、error 等。TUI、app-server、exec 模式都靠这些事件更新 UI 或输出结果。</p>
+<h2 id="二session-的核心结构">二、Session 的核心结构</h2>
+<p>完整定义（Rust，截取自 Codex 源码）：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>pub(crate) struct Session {</span></span>
+<span class="line"><span>    pub(crate) conversation_id: ThreadId,</span></span>
+<span class="line"><span>    pub(crate) installation_id: String,</span></span>
+<span class="line"><span>    pub(super) tx_event: Sender&lt;Event&gt;,</span></span>
+<span class="line"><span>    pub(super) agent_status: watch::Sender&lt;AgentStatus&gt;,</span></span>
+<span class="line"><span>    pub(super) out_of_band_elicitation_paused: watch::Sender&lt;bool&gt;,</span></span>
+<span class="line"><span>    pub(super) state: Mutex&lt;SessionState&gt;,</span></span>
+<span class="line"><span>    /// Serializes rebuild/apply cycles for the running proxy; each cycle</span></span>
+<span class="line"><span>    /// rebuilds from the current SessionState while holding this lock.</span></span>
+<span class="line"><span>    pub(super) managed_network_proxy_refresh_lock: Semaphore,</span></span>
+<span class="line"><span>    /// The set of enabled features should be invariant for the lifetime of the</span></span>
+<span class="line"><span>    /// session.</span></span>
+<span class="line"><span>    pub(super) features: ManagedFeatures,</span></span>
+<span class="line"><span>    pub(super) pending_mcp_server_refresh_config: Mutex&lt;Option&lt;McpServerRefreshConfig&gt;&gt;,</span></span>
+<span class="line"><span>    pub(crate) conversation: Arc&lt;RealtimeConversationManager&gt;,</span></span>
+<span class="line"><span>    pub(crate) active_turn: Mutex&lt;Option&lt;ActiveTurn&gt;&gt;,</span></span>
+<span class="line"><span>    pub(crate) input_queue: InputQueue,</span></span>
+<span class="line"><span>    pub(crate) goal_runtime: GoalRuntimeState,</span></span>
+<span class="line"><span>    pub(crate) guardian_review_session: GuardianReviewSessionManager,</span></span>
+<span class="line"><span>    pub(crate) services: SessionServices,</span></span>
+<span class="line"><span>    pub(super) next_internal_sub_id: AtomicU64,</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>最关键的三块：</p>
+<ul>
+<li><code>SessionState</code>：保存“状态” —— 会话级可变状态容器：上下文历史、配置快照、token/rate limit、上一轮 turn 设置、auto compact 状态等。</li>
+<li><code>SessionServices</code>：保存“能力” —— 集中执行所需服务：模型客户端、MCP、shell 执行、插件、技能、hooks、AgentControl、thread store 等。</li>
+<li><code>submission_loop</code>：保存“驱动逻辑” —— Session 创建后启动的后台 loop，不断接收 Op 并分发处理，是 Session 的执行心跳。</li>
+</ul>
+<h2 id="三session-的生命周期五步">三、Session 的生命周期（五步）</h2>
+<ol>
+<li>创建 Session：外层 <code>Codex::spawn()</code> 准备配置、模型信息、历史、工具管理器，然后调用 <code>Session::new()</code>。</li>
+<li>初始化运行时：<code>Session::new()</code> 初始化 thread 持久化、上下文历史、MCP、hooks、model client、权限策略、网络代理、插件和技能等运行环境。</li>
+<li>发出 SessionConfigured 事件：通知 UI/客户端当前 thread 已就绪（model、cwd、approval policy、permission profile、初始历史等）。</li>
+<li>启动 submission_loop：此后所有输入都变成 Op 进入这个 loop。</li>
+<li>处理输入并持续发事件：开始一个 turn —— 调模型、执行工具、更新历史、处理 approval、维护 active turn，进度通过事件流发出。</li>
+</ol>
+<h2 id="四agent-状态从事件流推导而非手写字段">四、Agent 状态：从事件流推导，而非手写字段</h2>
+<p>Agent 状态不是写死的影子数据，而是从事件流推导出来的：</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>推导出的状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TurnStarted</code></td>
+<td>Running</td>
+</tr>
+<tr>
+<td><code>TurnComplete</code></td>
+<td>Completed</td>
+</tr>
+<tr>
+<td><code>TurnAborted</code></td>
+<td>Interrupted / Errored</td>
+</tr>
+<tr>
+<td><code>Error</code></td>
+<td>Errored</td>
+</tr>
+<tr>
+<td><code>ShutdownComplete</code></td>
+<td>Shutdown</td>
+</tr>
+</tbody>
+</table>
+<p>实现上，Session 内部有 <code>watch::Sender&lt;AgentStatus&gt;</code>：每次发事件时先检查能否推导出新状态，能则更新 watch channel。AgentControl、wait_agent 等模块订阅这个 channel，实时感知状态变化。</p>
+<p>这是很漂亮的设计：状态不独立维护，而是从事实事件中派生 —— 单一事实来源，天然一致。</p>
+<h2 id="五session-与多-agent-的关系">五、Session 与多 Agent 的关系</h2>
+<p>多 agent 场景下，每个 sub-agent 本质上也是独立的 thread，有自己的 Session。但这些 Session 不孤立，共享同一个 AgentControl。分工如下：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Session</td>
+<td>负责某一个具体 agent/thread 的运行</td>
+</tr>
+<tr>
+<td>AgentControl</td>
+<td>负责一组 agent 之间的控制与通信（维护 agent 树、spawn 子 agent、发送 inter-agent communication、查询/订阅其他 agent 状态）</td>
+</tr>
+<tr>
+<td>AgentRegistry</td>
+<td>记录当前 agent 树、agent path、nickname、role 等 metadata</td>
+</tr>
+<tr>
+<td>ThreadManager</td>
+<td>负责 thread 的创建、查找、恢复和生命周期管理</td>
+</tr>
+</tbody>
+</table>
+<p>一句话：Session 是单个 agent 的运行时核心，AgentControl 是多 agent 协作的控制面。</p>
+<h2 id="六一条简化的数据流">六、一条简化的数据流</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>用户 / UI / AppServer</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>Codex.submit(Op)</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>submission_loop</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>Session handler</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>模型 / 工具 / MCP / Shell / Plugins</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>Session.send_event(...)</span></span>
+<span class="line"><span>        |</span></span>
+<span class="line"><span>        v</span></span>
+<span class="line"><span>TUI / exec output / app-server client</span></span></code></pre>
+<p>输入通过 Op 进入 Session，执行过程通过 Event 输出。 Session 站在输入和输出之间，把一次 agent 行为完整组织起来。</p>
+<h2 id="七为什么-session-是-agent-的核心之一">七、为什么 Session 是 Agent 的核心之一</h2>
+<p>Agent 的能力不只来自模型 —— 模型只是推理和生成的部分。真正让 Agent 成为“可执行系统”的，是 Session 这样的运行时容器，它把以下能力组合在一起：</p>
+<ul>
+<li>上下文管理</li>
+<li>配置与权限管理</li>
+<li>工具调用</li>
+<li>模型请求</li>
+<li>事件流输出</li>
+<li>turn 生命周期</li>
+<li>agent 状态维护</li>
+<li>中断与关闭</li>
+<li>多 agent 通信入口</li>
+<li>持久化与恢复</li>
+</ul>
+<p>没有 Session，Agent 就只是一组零散函数；有了 Session，Agent 才成为可以被启动、输入、观察、协作和终止的运行实体。</p>
+<p>如果说模型是 Agent 的大脑，那么 Session 更像是 Agent 的身体和神经系统：它连接输入、记忆、工具、动作和反馈，让 Agent 从“能生成文本”变成“能持续完成任务”。</p>
+</article></div><footer class="shell detail-footer" data-astro-cid-pcpmzeha><span data-astro-cid-pcpmzeha>© 2026 HILLINDIGO</span><a href="/records/learning/" data-astro-cid-pcpmzeha>返回学习记录 ↑</a></footer></main></body></html>
